@@ -10,7 +10,7 @@ import { Check, X } from "@phosphor-icons/react/dist/ssr";
 import { useDebouncer } from "@tanstack/react-pacer";
 import { useEffect, useState } from "react";
 
-import { Field, FieldError } from "@/components/ui/field";
+import { Field, FieldDescription, FieldError } from "@/components/ui/field";
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -108,7 +108,12 @@ export function SlugField({
 						setSlugError(authLocalization.auth.fieldRequired);
 					}}
 					aria-invalid={!!slugError}
-					placeholder={localization.slugPlaceholder}
+					aria-describedby={`${id}-description`}
+					placeholder="acme-technologies"
+					pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+					minLength={2}
+					maxLength={64}
+					title="Use lowercase letters, numbers, and hyphens only"
 					required
 					disabled={disabled}
 				/>
@@ -125,8 +130,14 @@ export function SlugField({
 					</InputGroupAddon>
 				)}
 			</InputGroup>
+			<FieldDescription id={`${id}-description`}>
+				Used in your workspace URL. Use lowercase letters, numbers, and hyphens.
+			</FieldDescription>
 
-			<FieldError>{slugError}</FieldError>
+			<FieldError>
+				{slugError ||
+					(checkSlugError ? "This workspace URL is unavailable." : undefined)}
+			</FieldError>
 		</Field>
 	);
 }

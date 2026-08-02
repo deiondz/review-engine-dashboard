@@ -8,7 +8,13 @@ import { AppShell } from "@/components/app-shell/app-shell";
 import { Settings } from "@/components/auth/settings/settings";
 import { MaxWidthContainer } from "@/components/max-width-container";
 import { auth } from "@/lib/auth";
+import { organizationPlugin } from "@/lib/auth/organization-plugin";
 import { getQueryClient } from "@/lib/query-client";
+
+const validSettingsPaths = [
+	...Object.values(viewPaths.settings),
+	...Object.values(organizationPlugin().viewPaths.settings ?? {}),
+];
 
 export default async function SettingsPage({
 	params,
@@ -19,7 +25,7 @@ export default async function SettingsPage({
 }) {
 	const { path } = await params;
 
-	if (!Object.values(viewPaths.settings).includes(path)) {
+	if (!validSettingsPaths.includes(path)) {
 		notFound();
 	}
 
@@ -41,7 +47,11 @@ export default async function SettingsPage({
 			<AppShell
 				session={session}
 				breadcrumbPage={
-					path === viewPaths.settings.security ? "Security" : "Account"
+					path === viewPaths.settings.security
+						? "Security"
+						: path === organizationPlugin().viewPaths.settings?.organizations
+							? "Organizations"
+							: "Account"
 				}
 			>
 				<MaxWidthContainer size="narrow" className="md:py-6">
