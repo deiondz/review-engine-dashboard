@@ -25,6 +25,7 @@ import { Field, FieldDescription, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { organizationPlugin } from "@/lib/auth/organization-plugin";
+import { goToOrganizationOnboarding } from "./organization-created-navigation";
 import { SlugField, sanitizeSlug } from "./slug-field";
 
 /** Props for the `CreateOrganizationDialog` component. */
@@ -39,6 +40,7 @@ export function CreateOrganizationDialog({
 }: CreateOrganizationDialogProps) {
 	const router = useRouter();
 	const { authClient, localization } = useAuth();
+	const organizationAuthClient = authClient as OrganizationAuthClient;
 	const { localization: organizationLocalization } =
 		useAuthPlugin(organizationPlugin);
 
@@ -51,10 +53,19 @@ export function CreateOrganizationDialog({
 		mutate: createOrganization,
 		isPending: isCreating,
 		error: createOrganizationError,
-	} = useCreateOrganization(authClient as OrganizationAuthClient, {
-		onSuccess: () => {
+	} = useCreateOrganization(organizationAuthClient, {
+		onSuccess: async (createdOrganization) => {
 			onOpenChange(false);
-			router.refresh();
+			await goToOrganizationOnboarding(
+				router,
+				createdOrganization.id,
+				async (organizationId) => {
+					const result = await organizationAuthClient.organization.setActive({
+						organizationId,
+					});
+					if (result.error) throw new Error(result.error.message);
+				},
+			);
 		},
 	});
 

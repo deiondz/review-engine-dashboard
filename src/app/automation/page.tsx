@@ -3,6 +3,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAutomationHealth } from "@/application/automation-health";
+import { getOnboardingProfile } from "@/application/onboarding";
 import { AppShell } from "@/components/app-shell/app-shell";
 import { AutomationGuide } from "@/components/automation/automation-guide";
 import { getPipelineReadService } from "@/composition/pipeline-container";
@@ -22,9 +23,14 @@ export default async function AutomationPage() {
 			activeOrganizationId?: string | null;
 		}
 	).activeOrganizationId;
-	const [snapshot, automationHealth] = await Promise.all([
+	if (businessId) {
+		const onboarding = await getOnboardingProfile(businessId);
+		if (!onboarding?.completed) redirect("/onboarding");
+	}
+	const [snapshot, automationHealth, onboarding] = await Promise.all([
 		businessId ? getPipelineReadService().getSnapshot(businessId) : null,
 		getAutomationHealth(),
+		businessId ? getOnboardingProfile(businessId) : null,
 	]);
 
 	return (
@@ -34,6 +40,7 @@ export default async function AutomationPage() {
 					businessId={businessId ?? null}
 					data={snapshot}
 					health={automationHealth}
+					onboarding={onboarding}
 				/>
 			</AppShell>
 		</HydrationBoundary>

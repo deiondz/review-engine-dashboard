@@ -17,6 +17,7 @@ import {
 	submitCompletedJob,
 } from "@/app/actions/messaging";
 import type { AutomationHealth } from "@/application/automation-health";
+import type { OnboardingProfile } from "@/application/onboarding";
 import type { PipelineSnapshot } from "@/application/ports/outbound/pipeline-read-service";
 import {
 	InteriorButton,
@@ -85,10 +86,12 @@ export function AutomationGuide({
 	businessId,
 	data,
 	health,
+	onboarding,
 }: {
 	businessId: string | null;
 	data: PipelineSnapshot | null;
 	health: AutomationHealth;
+	onboarding: OnboardingProfile | null;
 }) {
 	const { isRefreshing: isManualRefreshing, refresh } = useLiveRefresh(3000);
 	const [state, action] = useActionState(submitCompletedJob, initialState);
@@ -227,12 +230,14 @@ export function AutomationGuide({
 							<CossInputField
 								label="Owner name"
 								name="ownerName"
+								defaultValue={onboarding?.ownerName}
 								placeholder="e.g. Praveen"
 								description="Shown as the sender in the customer check-in."
 							/>
 							<CossInputField
 								label="Google review URL"
 								name="reviewUrl"
+								defaultValue={onboarding?.googleReviewUrl}
 								type="url"
 								placeholder="e.g. https://g.page/r/your-business/review"
 								description="The exact Google review link appended to requests."
@@ -858,6 +863,7 @@ function ReplyCard({
 function CossInputField({
 	label,
 	name,
+	defaultValue,
 	type = "text",
 	placeholder,
 	pattern,
@@ -866,6 +872,7 @@ function CossInputField({
 }: {
 	label: string;
 	name: string;
+	defaultValue?: string;
 	type?: string;
 	placeholder?: string;
 	pattern?: string;
@@ -877,6 +884,7 @@ function CossInputField({
 			<FieldLabel htmlFor={name}>{label}</FieldLabel>
 			<Input
 				nativeInput
+				defaultValue={defaultValue}
 				id={name}
 				name={name}
 				type={type}

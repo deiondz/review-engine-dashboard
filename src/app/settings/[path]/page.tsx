@@ -4,6 +4,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
+import { getOnboardingProfile } from "@/application/onboarding";
 import { AppShell } from "@/components/app-shell/app-shell";
 import { Settings } from "@/components/auth/settings/settings";
 import { MaxWidthContainer } from "@/components/max-width-container";
@@ -40,6 +41,15 @@ export default async function SettingsPage({
 		redirect(
 			`/auth/sign-in?redirectTo=${encodeURIComponent(`/settings/${path}`)}`,
 		);
+	}
+	const organizationId = (
+		session.session as typeof session.session & {
+			activeOrganizationId?: string | null;
+		}
+	).activeOrganizationId;
+	if (organizationId) {
+		const onboarding = await getOnboardingProfile(organizationId);
+		if (!onboarding?.completed) redirect("/onboarding");
 	}
 
 	return (

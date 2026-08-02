@@ -2,7 +2,7 @@ import { ensureSession } from "@better-auth-ui/react/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-
+import { getOnboardingProfile } from "@/application/onboarding";
 import { AppShell } from "@/components/app-shell/app-shell";
 import { OrganizationSwitcher } from "@/components/auth/organization/organization-switcher";
 import { PipelineDashboard } from "@/components/dashboard/pipeline-dashboard";
@@ -27,6 +27,10 @@ export default async function Home() {
 			activeOrganizationId?: string | null;
 		}
 	).activeOrganizationId;
+	if (businessId) {
+		const onboarding = await getOnboardingProfile(businessId);
+		if (!onboarding?.completed) redirect("/onboarding");
+	}
 	const snapshot = businessId
 		? await getPipelineReadService().getSnapshot(businessId)
 		: null;

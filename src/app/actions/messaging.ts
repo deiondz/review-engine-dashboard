@@ -4,7 +4,9 @@ import { randomUUID } from "node:crypto";
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import env from "@/../env.config";
+import { completeOnboarding } from "@/application/onboarding";
 import { connectDatabase } from "@/composition/database-container";
 import { auth } from "@/lib/auth";
 
@@ -207,6 +209,12 @@ export async function connectSession(formData: FormData) {
 		authType,
 		...(phoneNumber ? { phoneNumber } : {}),
 	});
+	if (formData.get("finishOnboarding") === "true") {
+		await completeOnboarding(businessId);
+		revalidatePath("/onboarding");
+		revalidatePath("/automation");
+		redirect("/");
+	}
 	revalidatePath("/");
 }
 
