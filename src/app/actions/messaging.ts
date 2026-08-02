@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import env from "@/../env.config";
 import { completeOnboarding } from "@/application/onboarding";
 import { connectDatabase } from "@/composition/database-container";
+import { getGoogleConnection } from "@/infrastructure/database/mongo/mongo-review-store";
 import { auth } from "@/lib/auth";
 
 async function organizationId() {
@@ -203,13 +204,19 @@ export async function connectSession(formData: FormData) {
 	const businessId = await organizationId();
 	const authType = formData.get("authType") === "pairing" ? "pairing" : "qr";
 	const phoneNumber = String(formData.get("phoneNumber") ?? "").trim();
+	const finishesOnboarding = formData.get("finishOnboarding") === "true";
+	if (finishesOnboarding) {
+		const connection = await getGoogleConnection(businessId);
+		if (!connection?.mapsUrl || !connection.locationId)
+			throw new Error("Configure the Google Maps location before continuing");
+	}
 	await request("/sessions/connect", {
 		businessId,
 		name: String(formData.get("name") || "main"),
 		authType,
 		...(phoneNumber ? { phoneNumber } : {}),
 	});
-	if (formData.get("finishOnboarding") === "true") {
+	if (finishesOnboarding) {
 		await completeOnboarding(businessId);
 		revalidatePath("/onboarding");
 		revalidatePath("/automation");

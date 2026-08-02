@@ -1,0 +1,43 @@
+diff --git a/modules/models.py b/modules/models.py
+index c4902d4..2d1378b 100644
+--- a/modules/models.py
++++ b/modules/models.py
+@@ -64,5 +64,6 @@ class RawReview:
+         'span[role="img"][aria-label]',
+         'span[class*="kvMYJc" i]',
++        'span[class*="fzvQIb" i]',
+     )
+     DATE_SELECTORS = (
+         'span[class*="rsqaWe"]',
+@@ -94,17 +95,21 @@ class RawReview:
+         avatar = first_attr(card, 'button[data-review-id] img', "src")
+ 
+         rating = 0.0
+         for sel in cls.RATING_SELECTORS:
+-            label = first_attr(card, sel, "aria-label")
+-            if label:
+-                num = re.search(r"[\d\.]+", label.replace(",", "."))
+-                if num:
+-                    try:
+-                        rating = float(num.group())
+-                        if 0 < rating <= 5:
+-                            break
+-                    except ValueError:
+-                        continue
++            for element in try_find(card, sel, all=True) or []:
++                label = element.get_attribute("aria-label") or element.text or ""
++                num = re.search(r"[\d\.]+", label.replace(",", "."))
++                if not num:
++                    continue
++                try:
++                    candidate = float(num.group())
++                    if 0 < candidate <= 5:
++                        rating = candidate
++                        break
++                except ValueError:
++                    continue
++            if rating:
++                break
+ 
+         date = ""
+         for sel in cls.DATE_SELECTORS:

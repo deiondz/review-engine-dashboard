@@ -1,6 +1,11 @@
 "use client";
 
-import { FlowArrow, Gear, House } from "@phosphor-icons/react/dist/ssr";
+import {
+	ChatTeardropText,
+	FlowArrow,
+	Gear,
+	House,
+} from "@phosphor-icons/react/dist/ssr";
 import type { User as BetterAuthUser } from "better-auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -44,6 +49,12 @@ export function AppSidebar({
 			href: "/automation",
 			icon: FlowArrow,
 			isActive: pathname === "/automation",
+		},
+		{
+			title: "Reviews",
+			href: "/reviews",
+			icon: ChatTeardropText,
+			isActive: pathname === "/reviews",
 		},
 		{
 			title: "Settings",

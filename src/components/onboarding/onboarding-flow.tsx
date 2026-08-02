@@ -149,16 +149,16 @@ function BusinessDetailsForm({
 				</OnboardingField>
 			</div>
 			<OnboardingField
-				label="Google review link"
+				label="Google Maps location"
 				name="googleReviewUrl"
-				description="Paste the direct link customers use to leave a review."
+				description="Paste your Google Maps or direct Google review link. We use it to collect this Business's reviews."
 			>
 				<Input
 					nativeInput
 					name="googleReviewUrl"
 					defaultValue={profile?.googleReviewUrl}
 					type="url"
-					placeholder="https://g.page/r/your-business/review"
+					placeholder="https://maps.google.com/... or https://g.page/r/.../review"
 					required
 				/>
 			</OnboardingField>

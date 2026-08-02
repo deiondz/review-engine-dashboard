@@ -78,6 +78,13 @@ const env = defineEnv({
 		GITLAB_ISSUER: z.string().url().optional(),
 		GOOGLE_CLIENT_ID: z.string().min(1).optional(),
 		GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
+		GOOGLE_REVIEWS_SCRAPER_URL: z
+			.string()
+			.url()
+			.default("http://google-reviews-scraper:8000"),
+		GOOGLE_REVIEWS_SCRAPER_API_KEY: z.string().optional().default(""),
+		REVIEW_SYNC_SECRET: z.string().min(24).optional(),
+		SARVAM_API_KEY: z.string().min(1).optional(),
 		HUGGINGFACE_CLIENT_ID: z.string().min(1).optional(),
 		HUGGINGFACE_CLIENT_SECRET: z.string().min(1).optional(),
 		KAKAO_CLIENT_ID: z.string().min(1).optional(),

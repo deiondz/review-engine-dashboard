@@ -2,6 +2,11 @@
 
 import { headers } from "next/headers";
 import { saveOnboardingProfile } from "@/application/onboarding";
+import {
+	googleMapsLocationId,
+	normalizeGoogleMapsLocationUrl,
+} from "@/application/reviews/google-maps-location";
+import { saveGoogleConnection } from "@/infrastructure/database/mongo/mongo-review-store";
 import { auth } from "@/lib/auth";
 
 export type OnboardingState = {
@@ -10,7 +15,8 @@ export type OnboardingState = {
 };
 
 async function activeOrganizationId() {
-	const session = await auth.api.getSession({ headers: await headers() });
+	const requestHeaders = await headers();
+	const session = await auth.api.getSession({ headers: requestHeaders });
 	if (!session) throw new Error("Sign in to continue");
 	const organizationId = (
 		session.session as typeof session.session & {
@@ -18,6 +24,16 @@ async function activeOrganizationId() {
 		}
 	).activeOrganizationId;
 	if (!organizationId) throw new Error("Select an organization first");
+	const organization = await auth.api.getFullOrganization({
+		headers: requestHeaders,
+	});
+	const membership = organization?.members.find(
+		(member) => member.userId === session.user.id,
+	);
+	if (!membership || !["owner", "admin"].includes(membership.role))
+		throw new Error(
+			"An Organization administrator must configure the Google location",
+		);
 	return organizationId;
 }
 
@@ -43,14 +59,7 @@ export async function saveBusinessDetails(
 			throw new Error(
 				"Use an international phone number, such as +919876543210",
 			);
-		let url: URL;
-		try {
-			url = new URL(googleReviewUrl);
-		} catch {
-			throw new Error("Enter a valid Google review link");
-		}
-		if (url.protocol !== "https:")
-			throw new Error("Google review link must use HTTPS");
+		const mapsUrl = await normalizeGoogleMapsLocationUrl(googleReviewUrl);
 
 		await saveOnboardingProfile(organizationId, {
 			businessName,
@@ -58,6 +67,12 @@ export async function saveBusinessDetails(
 			contactEmail,
 			contactPhone,
 			googleReviewUrl,
+		});
+		await saveGoogleConnection({
+			businessId: organizationId,
+			mapsUrl,
+			locationId: googleMapsLocationId(mapsUrl),
+			source: "google_maps_scraper",
 		});
 		return { status: "success", message: "Business details saved" };
 	} catch (error) {

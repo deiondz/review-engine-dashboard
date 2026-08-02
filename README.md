@@ -21,6 +21,8 @@ Use it when you want to start with the boring product plumbing in place: sign in
 - coss/shadcn-style UI primitives in `src/components/ui`.
 - Biome for linting and formatting.
 - Envin-based environment validation in `env.config.ts`.
+- Published n8n critical-incident triage with ZeptoMail delivery; see
+  `docs/n8n-critical-incident-triage.md`.
 
 ## Mail
 
