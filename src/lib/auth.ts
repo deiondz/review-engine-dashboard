@@ -1,6 +1,6 @@
 import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
-import { magicLink, multiSession } from "better-auth/plugins";
+import { magicLink, multiSession, organization } from "better-auth/plugins";
 import { after } from "next/server";
 
 import env from "../../env.config";
@@ -37,6 +37,7 @@ export const auth = betterAuth({
 	secret: env.BETTER_AUTH_SECRET,
 	plugins: [
 		multiSession(),
+		organization(),
 		magicLink({
 			sendMagicLink: async ({ email, url }) => {
 				void sendAuthEmail({ kind: "magic-link", email, url });

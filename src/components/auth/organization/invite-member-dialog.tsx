@@ -21,7 +21,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Field, FieldError } from "@/components/ui/field";
+import { Field, FieldDescription, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -31,7 +31,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
 import { organizationPlugin } from "@/lib/auth/organization-plugin";
 
 /** Props for the `InviteMemberDialog` component. */
@@ -96,9 +95,9 @@ export function InviteMemberDialog({
 
 	return (
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
-			<AlertDialogContent>
-				<form onSubmit={handleSubmit} className="flex flex-col gap-6">
-					<AlertDialogHeader>
+			<AlertDialogContent className="max-w-md">
+				<form onSubmit={handleSubmit} className="flex flex-col">
+					<AlertDialogHeader className="px-6 pb-0 pt-6">
 						<AlertDialogMedia>
 							<UserPlus />
 						</AlertDialogMedia>
@@ -112,7 +111,7 @@ export function InviteMemberDialog({
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 
-					<div className="flex flex-col gap-4">
+					<div className="space-y-5 px-6 py-6">
 						<Field data-invalid={!!emailError}>
 							<Label htmlFor="invite-member-email">
 								{localization.auth.email}
@@ -124,7 +123,7 @@ export function InviteMemberDialog({
 								type="email"
 								autoFocus
 								required
-								placeholder={localization.auth.email}
+								placeholder="name@company.com"
 								disabled={isInviting}
 								onChange={() => setEmailError(undefined)}
 								onInvalid={(e) => {
@@ -137,6 +136,9 @@ export function InviteMemberDialog({
 								}}
 								aria-invalid={!!emailError}
 							/>
+							<FieldDescription>
+								We’ll email this person an invitation to the organization.
+							</FieldDescription>
 
 							<FieldError>{emailError}</FieldError>
 						</Field>
@@ -163,19 +165,20 @@ export function InviteMemberDialog({
 									))}
 								</SelectContent>
 							</Select>
+							<FieldDescription>
+								Choose the access level they should receive.
+							</FieldDescription>
 
 							<FieldError />
 						</Field>
 					</div>
 
-					<AlertDialogFooter>
-						<AlertDialogCancel disabled={isInviting}>
+					<AlertDialogFooter className="border-t px-6 py-4">
+						<AlertDialogCancel variant="outline" disabled={isInviting}>
 							{localization.settings.cancel}
 						</AlertDialogCancel>
 
-						<Button type="submit" disabled={isInviting || !isRoleValid}>
-							{isInviting && <Spinner />}
-
+						<Button type="submit" loading={isInviting} disabled={!isRoleValid}>
 							{organizationLocalization.inviteMember}
 						</Button>
 					</AlertDialogFooter>

@@ -1,0 +1,20 @@
+services:
+  dashboard:
+    container_name: review-engine-dashboard
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "3002:3002"
+    networks:
+      - n8n_backend
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002').then(r=>{if(r.status>=500)process.exit(1)})"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+networks:
+  n8n_backend:
+    external: true

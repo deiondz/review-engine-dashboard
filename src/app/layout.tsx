@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "@/styles/app.css";
@@ -10,6 +10,7 @@ import { getEnabledSocialProviderIds } from "@/lib/auth-social-providers";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
 	title: "Nevin",
@@ -30,19 +31,21 @@ export default function RootLayout({
 		<html
 			lang="en"
 			suppressHydrationWarning
-			className={cn("font-sans", geist.variable)}
+			className={cn("font-sans", geist.variable, geistMono.variable)}
 		>
 			<head>
 				<ThemeScript />
 			</head>
-			<body className="antialiased min-h-svh flex flex-col">
+			<body className="relative min-h-svh antialiased">
 				<ThemeProvider
 					attribute="class"
 					defaultTheme="light"
 					enableSystem
 					disableTransitionOnChange
 				>
-					<Providers socialProviders={socialProviders}>{children}</Providers>
+					<div className="isolate relative flex min-h-svh flex-col">
+						<Providers socialProviders={socialProviders}>{children}</Providers>
+					</div>
 				</ThemeProvider>
 			</body>
 		</html>

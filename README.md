@@ -1,6 +1,6 @@
-# Nevin
+# Review Engine Dashboard
 
-Nevin is an opinionated default product template for my projects. It is built for auth-first Next.js apps and comes with Better Auth, MongoDB, TanStack Query, Tailwind CSS, coss/shadcn-style UI primitives, Phosphor icons, theme support, and account settings screens already wired.
+The Review Engine Dashboard extends the existing Nevin baseline with an organization-scoped operations console for campaigns, customer replies, WhatsApp messages, and WhatsApp sessions. Better Auth's active organization ID is the canonical `businessId` across the dashboard, n8n, and the Messaging Service.
 
 Use it when you want to start with the boring product plumbing in place: sign in, sign up, passkeys, magic links, social providers, account settings, organization-ready UI pieces, API keys, toasts, query caching, and a database boundary that can be swapped later.
 
@@ -81,6 +81,13 @@ bun dev
 
 Open `http://localhost:3000`.
 
+Docker exposes the production dashboard on port `3002`:
+
+```bash
+cp .env.example .env
+docker compose up -d --build
+```
+
 ## Environment
 
 Required:
@@ -89,6 +96,10 @@ Required:
 MONGODB_URI="mongodb://localhost:27017/nevin"
 MONGODB_MAX_POOL_SIZE="10"
 BETTER_AUTH_SECRET="replace-with-at-least-32-characters"
+REVIEWS_DATABASE_NAME="google_reviews"
+MESSAGING_DATABASE_NAME="whatsapp_messaging"
+MESSAGING_SERVICE_URL="http://whatsapp-messaging-service:3001"
+MESSAGING_SERVICE_API_KEY="same-secret-as-the-messaging-service"
 ```
 
 Optional:
@@ -152,6 +163,7 @@ Enabled by default:
 - Magic links. In development, links are logged with `console.info`.
 - Passkeys.
 - Multi-session support.
+- Organizations and active-organization tenant selection.
 - User deletion.
 - Runtime social-provider registration based on environment variables.
 

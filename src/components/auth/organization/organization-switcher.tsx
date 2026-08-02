@@ -15,6 +15,7 @@ import {
 	Gear as SettingsIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import type { Organization } from "better-auth/client";
+import { useRouter } from "next/navigation";
 import { type ComponentProps, type ReactElement, useState } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -61,6 +62,7 @@ export function OrganizationSwitcher({
 	setActive,
 	trigger,
 }: OrganizationSwitcherProps) {
+	const router = useRouter();
 	const { authClient, navigate, basePaths, localization, viewPaths, Link } =
 		useAuth();
 	const { data: session, isPending: sessionPending } = useSession(authClient);
@@ -79,6 +81,7 @@ export function OrganizationSwitcher({
 
 	const { mutate: setActiveOrganization } = useSetActiveOrganization(
 		authClient as OrganizationAuthClient,
+		{ onSuccess: () => router.refresh() },
 	);
 
 	const isPending =

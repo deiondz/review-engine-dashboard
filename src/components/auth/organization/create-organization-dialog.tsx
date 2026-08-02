@@ -7,6 +7,7 @@ import {
 	useCreateOrganization,
 } from "@better-auth-ui/react";
 import { Briefcase } from "@phosphor-icons/react/dist/ssr";
+import { useRouter } from "next/navigation";
 import { type SyntheticEvent, useEffect, useState } from "react";
 
 import {
@@ -20,10 +21,9 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Field, FieldError } from "@/components/ui/field";
+import { Field, FieldDescription, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Spinner } from "@/components/ui/spinner";
 import { organizationPlugin } from "@/lib/auth/organization-plugin";
 import { SlugField, sanitizeSlug } from "./slug-field";
 
@@ -37,6 +37,7 @@ export function CreateOrganizationDialog({
 	open,
 	onOpenChange,
 }: CreateOrganizationDialogProps) {
+	const router = useRouter();
 	const { authClient, localization } = useAuth();
 	const { localization: organizationLocalization } =
 		useAuthPlugin(organizationPlugin);
@@ -46,15 +47,29 @@ export function CreateOrganizationDialog({
 	const [slugEdited, setSlugEdited] = useState(false);
 	const [nameError, setNameError] = useState<string>();
 
-	const { mutate: createOrganization, isPending: isCreating } =
-		useCreateOrganization(authClient as OrganizationAuthClient, {
-			onSuccess: () => onOpenChange(false),
-		});
+	const {
+		mutate: createOrganization,
+		isPending: isCreating,
+		error: createOrganizationError,
+	} = useCreateOrganization(authClient as OrganizationAuthClient, {
+		onSuccess: () => {
+			onOpenChange(false);
+			router.refresh();
+		},
+	});
 
 	const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		if (name.trim().length < 2) {
+			setNameError("Enter at least 2 characters.");
+			return;
+		}
 		createOrganization({ name, slug });
 	};
+	const isValid =
+		name.trim().length >= 2 &&
+		/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) &&
+		slug.length <= 64;
 
 	useEffect(() => {
 		if (!open) {
@@ -72,9 +87,9 @@ export function CreateOrganizationDialog({
 
 	return (
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
-			<AlertDialogContent>
-				<form onSubmit={handleSubmit} className="flex flex-col gap-6">
-					<AlertDialogHeader>
+			<AlertDialogContent className="max-w-md">
+				<form onSubmit={handleSubmit} className="flex flex-col">
+					<AlertDialogHeader className="px-6 pb-0 pt-6">
 						<AlertDialogMedia>
 							<Briefcase />
 						</AlertDialogMedia>
@@ -88,7 +103,7 @@ export function CreateOrganizationDialog({
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 
-					<div className="flex flex-col gap-4">
+					<div className="space-y-5 px-6 py-6">
 						<Field data-invalid={!!nameError}>
 							<Label htmlFor="create-organization-name">
 								{organizationLocalization.name}
@@ -99,7 +114,9 @@ export function CreateOrganizationDialog({
 								name="name"
 								autoFocus
 								required
-								placeholder={organizationLocalization.namePlaceholder}
+								minLength={2}
+								maxLength={100}
+								placeholder="Acme Technologies"
 								value={name}
 								onChange={(e) => {
 									setName(e.target.value);
@@ -110,8 +127,12 @@ export function CreateOrganizationDialog({
 									setNameError(localization.auth.fieldRequired);
 								}}
 								aria-invalid={!!nameError}
+								aria-describedby="create-organization-name-description"
 								disabled={isCreating}
 							/>
+							<FieldDescription id="create-organization-name-description">
+								Use the customer-facing name of your business or team.
+							</FieldDescription>
 
 							<FieldError>{nameError}</FieldError>
 						</Field>
@@ -125,16 +146,25 @@ export function CreateOrganizationDialog({
 							}}
 							disabled={isCreating}
 						/>
+						{createOrganizationError ? (
+							<p
+								className="text-destructive text-sm"
+								role="alert"
+								aria-live="polite"
+							>
+								{createOrganizationError instanceof Error
+									? createOrganizationError.message
+									: "Could not create the organization. Try a different name or slug."}
+							</p>
+						) : null}
 					</div>
 
-					<AlertDialogFooter>
-						<AlertDialogCancel disabled={isCreating}>
+					<AlertDialogFooter className="border-t px-6 py-4">
+						<AlertDialogCancel variant="outline" disabled={isCreating}>
 							{localization.settings.cancel}
 						</AlertDialogCancel>
 
-						<Button type="submit" disabled={isCreating}>
-							{isCreating && <Spinner />}
-
+						<Button type="submit" loading={isCreating} disabled={!isValid}>
 							{organizationLocalization.createOrganization}
 						</Button>
 					</AlertDialogFooter>

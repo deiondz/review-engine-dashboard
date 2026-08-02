@@ -1,11 +1,11 @@
 "use client";
 
-import { Gear, House } from "@phosphor-icons/react/dist/ssr";
+import { FlowArrow, Gear, House } from "@phosphor-icons/react/dist/ssr";
 import type { User as BetterAuthUser } from "better-auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ComponentProps } from "react";
-
+import { OrganizationSwitcher } from "@/components/auth/organization/organization-switcher";
 import { UserButton } from "@/components/auth/user/user-button";
 import { Logo } from "@/components/logo";
 import {
@@ -40,6 +40,12 @@ export function AppSidebar({
 			isActive: pathname === "/",
 		},
 		{
+			title: "Automation",
+			href: "/automation",
+			icon: FlowArrow,
+			isActive: pathname === "/automation",
+		},
+		{
 			title: "Settings",
 			href: "/settings/account",
 			icon: Gear,
@@ -61,11 +67,13 @@ export function AppSidebar({
 							render={
 								<Link href="/">
 									<div className="flex aspect-square size-8 items-center justify-center">
-										<Logo alt="Nevin" className="h-8 w-auto" />
+										<Logo alt="Review Engine" className="h-8 w-auto" />
 									</div>
 									<div className="grid flex-1 text-left text-sm leading-tight">
-										<span className="truncate font-medium">Nevin</span>
-										<span className="truncate text-xs">Auth starter</span>
+										<span className="truncate font-medium">Review Engine</span>
+										<span className="truncate text-xs">
+											Pipeline operations
+										</span>
 									</div>
 								</Link>
 							}
@@ -73,6 +81,17 @@ export function AppSidebar({
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarHeader>
+			<div className="px-2 pb-2">
+				<p className="mb-1 px-2 font-medium text-muted-foreground text-xs uppercase tracking-wide">
+					Organization
+				</p>
+				<OrganizationSwitcher
+					className="w-full justify-between border border-sidebar-border bg-sidebar-accent/40"
+					hidePersonal
+					side="right"
+					sideOffset={8}
+				/>
+			</div>
 			<SidebarContent>
 				<NavMain items={navMain} />
 			</SidebarContent>

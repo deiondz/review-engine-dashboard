@@ -17,6 +17,7 @@ function createMailService(): MailService {
 			token,
 			fromEmail,
 			fromName: env.ZEPTOMAIL_FROM_NAME,
+			apiUrl: env.ZEPTOMAIL_API_URL,
 		});
 	}
 
