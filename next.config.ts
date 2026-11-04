@@ -10,6 +10,8 @@ const env = process.env.VERCEL_ENV ?? process.env.NODE_ENV;
 const favicon = FAVICONS[env as keyof typeof FAVICONS];
 
 const nextConfig: NextConfig = {
+	output: "standalone",
+	turbopack: { root: process.cwd() },
 	async rewrites() {
 		if (!favicon) {
 			return [];

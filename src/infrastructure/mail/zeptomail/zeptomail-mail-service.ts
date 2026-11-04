@@ -5,8 +5,6 @@ import type {
 	SendMailInput,
 } from "@/application/ports/outbound/mail-service";
 
-const ZEPTOMAIL_API_URL = "https://api.zeptomail.com/v1.1/email";
-
 type ZeptoMailErrorBody = {
 	error?: {
 		code?: string;
@@ -20,6 +18,7 @@ export type ZeptoMailMailServiceOptions = {
 	token: string;
 	fromEmail: string;
 	fromName: string;
+	apiUrl: string;
 };
 
 export class ZeptoMailMailService implements MailService {
@@ -53,7 +52,7 @@ export class ZeptoMailMailService implements MailService {
 			];
 		}
 
-		const response = await fetch(ZEPTOMAIL_API_URL, {
+		const response = await fetch(this.options.apiUrl, {
 			method: "POST",
 			headers: {
 				Authorization: `Zoho-enczapikey ${this.options.token}`,

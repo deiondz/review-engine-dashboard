@@ -35,12 +35,24 @@ const env = defineEnv({
 			.positive()
 			.max(100)
 			.default(10),
+		REVIEWS_DATABASE_NAME: z.string().min(1).default("google_reviews"),
+		MESSAGING_DATABASE_NAME: z.string().min(1).default("whatsapp_messaging"),
+		MESSAGING_SERVICE_URL: z
+			.string()
+			.url()
+			.default("http://whatsapp-messaging-service:3001"),
+		N8N_HEALTH_URL: z.string().url().default("http://n8n:5678/healthz"),
+		MESSAGING_SERVICE_API_KEY: z.string().min(24),
 		BETTER_AUTH_SECRET: z.string().min(32),
 		BETTER_AUTH_URL: z.string().url().optional(),
 		APP_NAME: z.string().min(1).default("Nevin"),
 		ZEPTOMAIL_TOKEN: z.string().min(1).optional(),
 		ZEPTOMAIL_FROM_EMAIL: z.string().email().optional(),
 		ZEPTOMAIL_FROM_NAME: z.string().min(1).default("Nevin"),
+		ZEPTOMAIL_API_URL: z
+			.string()
+			.url()
+			.default("https://api.zeptomail.com/v1.1/email"),
 		APPLE_CLIENT_ID: z.string().min(1).optional(),
 		APPLE_CLIENT_SECRET: z.string().min(1).optional(),
 		ATLASSIAN_CLIENT_ID: z.string().min(1).optional(),
@@ -66,6 +78,13 @@ const env = defineEnv({
 		GITLAB_ISSUER: z.string().url().optional(),
 		GOOGLE_CLIENT_ID: z.string().min(1).optional(),
 		GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
+		GOOGLE_REVIEWS_SCRAPER_URL: z
+			.string()
+			.url()
+			.default("http://google-reviews-scraper:8000"),
+		GOOGLE_REVIEWS_SCRAPER_API_KEY: z.string().optional().default(""),
+		REVIEW_SYNC_SECRET: z.string().min(24).optional(),
+		SARVAM_API_KEY: z.string().min(1).optional(),
 		HUGGINGFACE_CLIENT_ID: z.string().min(1).optional(),
 		HUGGINGFACE_CLIENT_SECRET: z.string().min(1).optional(),
 		KAKAO_CLIENT_ID: z.string().min(1).optional(),

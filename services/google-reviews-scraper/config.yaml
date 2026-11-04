@@ -1,0 +1,21 @@
+headless: true
+sort_by: newest
+scrape_mode: update
+stop_threshold: 5
+max_reviews: 0
+max_scroll_attempts: 50
+scroll_idle_limit: 12
+download_images: false
+use_mongodb: false
+use_s3: false
+backup_to_json: false
+db_path: /data/reviews.db
+log_level: INFO
+log_dir: /data/logs
+log_file: scraper.log
+resilience:
+  retry_on_session_death: 1
+  retry_backoff_base_seconds: 3
+  rate_limit_cooldown_seconds: 60
+audit:
+  retention_days: 90

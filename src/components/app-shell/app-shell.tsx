@@ -40,7 +40,7 @@ export function AppShell({
 			<SidebarInset className="relative isolate flex flex-1 flex-col overflow-hidden">
 				<div
 					aria-hidden="true"
-					className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,var(--auth-grid-line)_1px,transparent_1px),linear-gradient(to_bottom,var(--auth-grid-line)_1px,transparent_1px)] bg-size-[6rem_4rem] [--auth-grid-line:color-mix(in_oklab,var(--muted-foreground)_7%,transparent)] dark:[--auth-grid-line:color-mix(in_oklab,var(--muted-foreground)_3%,transparent)]"
+					className="absolute inset-0 -z-10 h-full w-full bg-neutral-100 bg-[linear-gradient(to_right,var(--auth-grid-line)_1px,transparent_1px),linear-gradient(to_bottom,var(--auth-grid-line)_1px,transparent_1px)] bg-size-[6rem_4rem] [--auth-grid-line:color-mix(in_oklab,var(--muted-foreground)_7%,transparent)] dark:bg-background dark:[--auth-grid-line:color-mix(in_oklab,var(--muted-foreground)_3%,transparent)]"
 				/>
 				<header className="relative z-10 flex h-16 w-full shrink-0 items-center gap-2 border-muted border-b bg-sidebar/50">
 					<MaxWidthContainer className="flex min-w-0 items-center gap-2 py-0">
@@ -49,7 +49,9 @@ export function AppShell({
 						<Breadcrumb>
 							<BreadcrumbList>
 								<BreadcrumbItem className="hidden md:block">
-									<BreadcrumbLink render={<Link href="/">Nevin</Link>} />
+									<BreadcrumbLink
+										render={<Link href="/">Review Engine</Link>}
+									/>
 								</BreadcrumbItem>
 								<BreadcrumbSeparator className="hidden md:block" />
 								<BreadcrumbItem>
